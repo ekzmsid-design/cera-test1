@@ -10,6 +10,7 @@ const memoInput = document.getElementById('memo');
 const photoInput = document.getElementById('photo');
 
 let people = [];
+let currentPersonIndex = null;
 
 function renderPeople() {
     personList.innerHTML = '';
@@ -39,8 +40,6 @@ cancelBtn.addEventListener('click', () => {
     addPersonForm.classList.add('hidden');
     addPersonBtn.classList.remove('hidden');
 });
-
-const photoInput = document.getElementById('photo');
 
 addPersonForm.addEventListener('submit', (e) => {
     e.preventDefault();
@@ -84,8 +83,6 @@ backToListBtn.addEventListener('click', () => {
     listView.classList.remove('hidden');
     currentPersonIndex = null;
 });
-
-let currentPersonIndex = null;
 
 personList.addEventListener('click', (e) => {
     if (e.target.classList.contains('delete-btn')) {
