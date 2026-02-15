@@ -7,7 +7,11 @@ const groupInput = document.getElementById('group');
 const companyInput = document.getElementById('company');
 const birthdayInput = document.getElementById('birthday');
 const memoInput = document.getElementById('memo');
-const photoInput = document.getElementById('photo');
+const nameInput = document.getElementById('name');
+const groupInput = document.getElementById('group');
+const companyInput = document.getElementById('company');
+const birthdayInput = document.getElementById('birthday');
+const memoInput = document.getElementById('memo');
 
 const listView = document.getElementById('list-view');
 const personDetailView = document.getElementById('person-detail-view');
@@ -36,9 +40,7 @@ function renderPeople() {
     people.forEach(person => {
         const li = document.createElement('li');
         li.dataset.id = person.id;
-        const photoHtml = person.photo ? `<img src="${person.photo}" alt="${person.name}" class="thumbnail">` : '';
         li.innerHTML = `
-            ${photoHtml}
             <div>
                 <strong>${person.name}</strong><br>
                 그룹: ${person.group || ''}<br>
@@ -64,23 +66,6 @@ cancelBtn.addEventListener('click', () => {
 addPersonForm.addEventListener('submit', async (e) => {
     e.preventDefault();
     console.log("Add person form submitted.");
-    const photoFile = photoInput.files[0];
-    let photoUrl = '';
-
-    if (photoFile) {
-        console.log("Photo file selected, uploading to Storage...");
-        const filename = `photos/${Date.now()}-${photoFile.name}`;
-        const photoRef = storage.ref().child(filename);
-        try {
-            await photoRef.put(photoFile);
-            photoUrl = await photoRef.getDownloadURL();
-            console.log("Photo uploaded, URL:", photoUrl);
-        } catch (error) {
-            console.error("Error uploading photo:", error);
-            alert("사진 업로드 중 오류가 발생했습니다: " + error.message);
-            return; // Stop execution if photo upload fails
-        }
-    }
 
     const newPerson = {
         name: nameInput.value,
@@ -88,7 +73,7 @@ addPersonForm.addEventListener('submit', async (e) => {
         company: companyInput.value,
         birthday: birthdayInput.value,
         memo: memoInput.value,
-        photo: photoUrl,
+        photo: '', // No photo upload anymore
         comments: []
     };
 
@@ -107,7 +92,6 @@ addPersonForm.addEventListener('submit', async (e) => {
     companyInput.value = '';
     birthdayInput.value = '';
     memoInput.value = '';
-    photoInput.value = '';
     addPersonForm.classList.add('hidden');
     addPersonBtn.classList.remove('hidden');
 });
@@ -115,17 +99,6 @@ addPersonForm.addEventListener('submit', async (e) => {
 personList.addEventListener('click', async (e) => {
     if (e.target.classList.contains('delete-btn')) {
         const personId = e.target.dataset.id;
-        const person = people.find(p => p.id === personId);
-        if (person && person.photo) {
-            console.log("Deleting photo from Storage:", person.photo);
-            try {
-                await storage.refFromURL(person.photo).delete();
-                console.log("Photo deleted successfully.");
-            } catch (error) {
-                console.error("Error deleting photo:", error);
-                // Don't stop deletion of the person even if photo fails
-            }
-        }
         console.log("Deleting person from Firestore:", personId);
         try {
             await db.collection("people").doc(personId).delete();
@@ -173,9 +146,7 @@ function renderPersonDetail() {
     const person = people.find(p => p.id === currentPersonId);
     if (!person) return;
 
-    const photoHtml = person.photo ? `<img src="${person.photo}" alt="${person.name}" class="detail-photo">` : '';
     personDetails.innerHTML = `
-        ${photoHtml}
         <strong>${person.name}</strong><br>
         그룹: ${person.group || ''}<br>
         직장: ${person.company || ''}<br>
