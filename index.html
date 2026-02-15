@@ -8,19 +8,31 @@
 </head>
 <body>
     <div id="app">
-        <h1>인물 목록</h1>
-        <ul id="person-list"></ul>
-        <button id="add-person-btn">인물 추가</button>
-        <form id="add-person-form" class="hidden">
-            <h2>인물 추가</h2>
-            <input type="text" id="name" placeholder="이름" required>
-            <input type="text" id="group" placeholder="그룹">
-            <input type="text" id="company" placeholder="직장">
-            <input type="date" id="birthday" placeholder="생일">
-            <textarea id="memo" placeholder="메모"></textarea>
-            <button type="submit">저장</button>
-            <button type="button" id="cancel-btn">취소</button>
-        </form>
+        <div id="list-view">
+            <h1>인물 목록</h1>
+            <ul id="person-list"></ul>
+            <button id="add-person-btn">인물 추가</button>
+            <form id="add-person-form" class="hidden">
+                <h2>인물 추가</h2>
+                <input type="text" id="name" placeholder="이름" required>
+                <input type="text" id="group" placeholder="그룹">
+                <input type="text" id="company" placeholder="직장">
+                <input type="date" id="birthday" placeholder="생일">
+                <textarea id="memo" placeholder="메모"></textarea>
+                <button type="submit">저장</button>
+                <button type="button" id="cancel-btn">취소</button>
+            </form>
+        </div>
+        <div id="person-detail-view" class="hidden">
+            <button id="back-to-list-btn">← 목록으로</button>
+            <div id="person-details"></div>
+            <h2>댓글</h2>
+            <div id="comments-list"></div>
+            <form id="comment-form">
+                <textarea id="comment-input" placeholder="댓글 추가..." required></textarea>
+                <button type="submit">댓글 추가</button>
+            </form>
+        </div>
     </div>
     <script src="main.js"></script>
 </body>

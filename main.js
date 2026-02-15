@@ -14,6 +14,7 @@ function renderPeople() {
     personList.innerHTML = '';
     people.forEach((person, index) => {
         const li = document.createElement('li');
+        li.dataset.index = index;
         li.innerHTML = `
             <strong>${person.name}</strong><br>
             그룹: ${person.group || ''}<br>
@@ -43,7 +44,8 @@ addPersonForm.addEventListener('submit', (e) => {
         group: groupInput.value,
         company: companyInput.value,
         birthday: birthdayInput.value,
-        memo: memoInput.value
+        memo: memoInput.value,
+        comments: []
     };
     people.push(newPerson);
     nameInput.value = '';
@@ -56,10 +58,66 @@ addPersonForm.addEventListener('submit', (e) => {
     renderPeople();
 });
 
+const listView = document.getElementById('list-view');
+const personDetailView = document.getElementById('person-detail-view');
+const personDetails = document.getElementById('person-details');
+const commentsList = document.getElementById('comments-list');
+const commentForm = document.getElementById('comment-form');
+const backToListBtn = document.getElementById('back-to-list-btn');
+
+backToListBtn.addEventListener('click', () => {
+    personDetailView.classList.add('hidden');
+    listView.classList.remove('hidden');
+    currentPersonIndex = null;
+});
+
+let currentPersonIndex = null;
+
 personList.addEventListener('click', (e) => {
     if (e.target.classList.contains('delete-btn')) {
         const index = e.target.dataset.index;
         people.splice(index, 1);
         renderPeople();
+    } else if (e.target.closest('li')) {
+        currentPersonIndex = e.target.closest('li').dataset.index;
+        renderPersonDetail();
+        listView.classList.add('hidden');
+        personDetailView.classList.remove('hidden');
     }
 });
+
+const commentInput = document.getElementById('comment-input');
+
+commentForm.addEventListener('submit', (e) => {
+    e.preventDefault();
+    const newComment = commentInput.value;
+    if (newComment) {
+        people[currentPersonIndex].comments.push(newComment);
+        commentInput.value = '';
+        renderComments();
+    }
+});
+
+function renderPersonDetail() {
+    const person = people[currentPersonIndex];
+    personDetails.innerHTML = `
+        <strong>${person.name}</strong><br>
+        그룹: ${person.group || ''}<br>
+        직장: ${person.company || ''}<br>
+        생일: ${person.birthday || ''}<br>
+        메모: ${person.memo || ''}
+    `;
+    renderComments();
+}
+
+function renderComments() {
+    const person = people[currentPersonIndex];
+    commentsList.innerHTML = '';
+    person.comments.forEach(comment => {
+        const li = document.createElement('div');
+        li.classList.add('comment');
+        li.textContent = comment;
+        commentsList.appendChild(li);
+    });
+}
+
