@@ -7,6 +7,7 @@ const groupInput = document.getElementById('group');
 const companyInput = document.getElementById('company');
 const birthdayInput = document.getElementById('birthday');
 const memoInput = document.getElementById('memo');
+const photoInput = document.getElementById('photo');
 
 let people = [];
 
@@ -15,12 +16,14 @@ function renderPeople() {
     people.forEach((person, index) => {
         const li = document.createElement('li');
         li.dataset.index = index;
+        const photoHtml = person.photo ? `<img src="${person.photo}" alt="${person.name}" class="thumbnail">` : '';
         li.innerHTML = `
-            <strong>${person.name}</strong><br>
-            그룹: ${person.group || ''}<br>
-            직장: ${person.company || ''}<br>
-            생일: ${person.birthday || ''}<br>
-            메모: ${person.memo || ''}
+            ${photoHtml}
+            <div>
+                <strong>${person.name}</strong><br>
+                그룹: ${person.group || ''}<br>
+                직장: ${person.company || ''}<br>
+            </div>
             <button class="delete-btn" data-index="${index}">삭제</button>
         `;
         personList.appendChild(li);
@@ -37,10 +40,20 @@ cancelBtn.addEventListener('click', () => {
     addPersonBtn.classList.remove('hidden');
 });
 
+const photoInput = document.getElementById('photo');
+
 addPersonForm.addEventListener('submit', (e) => {
     e.preventDefault();
+
+    const photoFile = photoInput.files[0];
+    let photoUrl = '';
+    if (photoFile) {
+        photoUrl = URL.createObjectURL(photoFile);
+    }
+
     const newPerson = {
         name: nameInput.value,
+        photo: photoUrl,
         group: groupInput.value,
         company: companyInput.value,
         birthday: birthdayInput.value,
@@ -49,6 +62,7 @@ addPersonForm.addEventListener('submit', (e) => {
     };
     people.push(newPerson);
     nameInput.value = '';
+    photoInput.value = '';
     groupInput.value = '';
     companyInput.value = '';
     birthdayInput.value = '';
@@ -100,7 +114,9 @@ commentForm.addEventListener('submit', (e) => {
 
 function renderPersonDetail() {
     const person = people[currentPersonIndex];
+    const photoHtml = person.photo ? `<img src="${person.photo}" alt="${person.name}" class="detail-photo">` : '';
     personDetails.innerHTML = `
+        ${photoHtml}
         <strong>${person.name}</strong><br>
         그룹: ${person.group || ''}<br>
         직장: ${person.company || ''}<br>
