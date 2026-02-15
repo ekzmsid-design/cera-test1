@@ -44,31 +44,43 @@ cancelBtn.addEventListener('click', () => {
 addPersonForm.addEventListener('submit', (e) => {
     e.preventDefault();
 
-    const photoFile = photoInput.files[0];
-    let photoUrl = '';
-    if (photoFile) {
-        photoUrl = URL.createObjectURL(photoFile);
-    }
-
     const newPerson = {
         name: nameInput.value,
-        photo: photoUrl,
+        photo: '',
         group: groupInput.value,
         company: companyInput.value,
         birthday: birthdayInput.value,
         memo: memoInput.value,
         comments: []
     };
-    people.push(newPerson);
-    nameInput.value = '';
-    photoInput.value = '';
-    groupInput.value = '';
-    companyInput.value = '';
-    birthdayInput.value = '';
-    memoInput.value = '';
-    addPersonForm.classList.add('hidden');
-    addPersonBtn.classList.remove('hidden');
-    renderPeople();
+
+    const photoFile = photoInput.files[0];
+
+    if (photoFile) {
+        const reader = new FileReader();
+        reader.onload = function(event) {
+            newPerson.photo = event.target.result;
+            people.push(newPerson);
+            resetAndRender();
+        };
+        reader.readAsDataURL(photoFile);
+    } else {
+        people.push(newPerson);
+        resetAndRender();
+    }
+
+    function resetAndRender() {
+        nameInput.value = '';
+        photoInput.value = '';
+        groupInput.value = '';
+        companyInput.value = '';
+        birthdayInput.value = '';
+        memoInput.value = '';
+        addPersonForm.classList.add('hidden');
+        addPersonBtn.classList.remove('hidden');
+        renderPeople();
+        savePeople();
+    }
 });
 
 const listView = document.getElementById('list-view');
@@ -89,6 +101,7 @@ personList.addEventListener('click', (e) => {
         const index = e.target.dataset.index;
         people.splice(index, 1);
         renderPeople();
+        savePeople();
     } else if (e.target.closest('li')) {
         currentPersonIndex = e.target.closest('li').dataset.index;
         renderPersonDetail();
@@ -106,6 +119,7 @@ commentForm.addEventListener('submit', (e) => {
         people[currentPersonIndex].comments.push(newComment);
         commentInput.value = '';
         renderComments();
+        savePeople();
     }
 });
 
@@ -133,4 +147,18 @@ function renderComments() {
         commentsList.appendChild(li);
     });
 }
+
+function savePeople() {
+    localStorage.setItem('people', JSON.stringify(people));
+}
+
+function loadPeople() {
+    const savedPeople = localStorage.getItem('people');
+    if (savedPeople) {
+        people = JSON.parse(savedPeople);
+        renderPeople();
+    }
+}
+
+loadPeople();
 
