@@ -7,11 +7,6 @@ const groupInput = document.getElementById('group');
 const companyInput = document.getElementById('company');
 const birthdayInput = document.getElementById('birthday');
 const memoInput = document.getElementById('memo');
-const nameInput = document.getElementById('name');
-const groupInput = document.getElementById('group');
-const companyInput = document.getElementById('company');
-const birthdayInput = document.getElementById('birthday');
-const memoInput = document.getElementById('memo');
 
 const listView = document.getElementById('list-view');
 const personDetailView = document.getElementById('person-detail-view');
