@@ -10,11 +10,12 @@ let people = [];
 
 function renderPeople() {
     personList.innerHTML = '';
-    people.forEach(person => {
+    people.forEach((person, index) => {
         const li = document.createElement('li');
         li.innerHTML = `
             <strong>${person.name}</strong><br>
             ${person.title} at ${person.organization}
+            <button class="delete-btn" data-index="${index}">삭제</button>
         `;
         personList.appendChild(li);
     });
@@ -44,4 +45,12 @@ addPersonForm.addEventListener('submit', (e) => {
     addPersonForm.classList.add('hidden');
     addPersonBtn.classList.remove('hidden');
     renderPeople();
+});
+
+personList.addEventListener('click', (e) => {
+    if (e.target.classList.contains('delete-btn')) {
+        const index = e.target.dataset.index;
+        people.splice(index, 1);
+        renderPeople();
+    }
 });
